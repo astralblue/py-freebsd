@@ -1,9 +1,9 @@
-# $Id: MANIFEST.in,v 1.1 2002/06/13 23:05:33 perky Exp $
+# $FreeBSD$
 
-include COPYRIGHT MANIFEST.in AUTHORS
+include COPYRIGHT MANIFEST.in AUTHORS TUTORIAL CONTRIBUTORS
 
-#recursive-include test *
-recursive-include doc *
-recursive-include src *.h *.c
+recursive-include src *.h *.c *.def
+recursive-include tests *.py
+recursive-include tools *.py
 
 global-exclude */CVS/* *.pyc *.pyo

@@ -26,38 +26,39 @@
  * $FreeBSD$
  */
 
-#include <sys/reboot.h>
-
-EXPCONST(int RB_AUTOBOOT)
-EXPCONST(int RB_ASKNAME)
-EXPCONST(int RB_DFLTROOT)
-EXPCONST(int RB_DUMP)
-EXPCONST(int RB_HALT)
-EXPCONST(int RB_POWEROFF)
-EXPCONST(int RB_INITNAME)
-EXPCONST(int RB_KDB)
-EXPCONST(int RB_NOSYNC)
-EXPCONST(int RB_RDONLY)
-EXPCONST(int RB_SINGLE)
-
-
-static char PyFB_reboot__doc__[] =
-"reboot([howto]):\n"
-"reboots the system.  Only the super-user may reboot a machine on\n"
-"demand.  However, a reboot is invoked automatically in the event\n"
-"of unrecoverable system failures.";
+static char PyFB_gethostname__doc__[] =
+"gethostname():\n"
+"returns the standard host name for the current processor, as\n"
+"previously set by sethostname().";
 
 static PyObject *
-PyFB_reboot(PyObject *self, PyObject *args)
+PyFB_gethostname(PyObject *self)
 {
-	int howto = RB_AUTOBOOT;
+	char buf[BUFSIZ];
 
-	if (!PyArg_ParseTuple(args, "|i:reboot", &howto))
-		return NULL;
-
-	if (reboot(howto) == -1)
+	if (gethostname(buf, BUFSIZ) == -1)
 		return OSERROR();
 
-	/* will never reach */
-	return NULL;
+	return PyString_FromString(buf);
+}
+
+static char PyFB_sethostname__doc__[] =
+"sethostname(name):\n"
+"sets the name of the host machine to be name, which has length\n"
+"namelen.  This call is restricted to the super-user and is normally\n"
+"used only when the system is bootstrapped.";
+
+static PyObject *
+PyFB_sethostname(PyObject *self, PyObject *args)
+{
+	char *buf;
+	int buflen;
+
+	if (!PyArg_ParseTuple(args, "s#:sethostname", &buf, &buflen))
+		return NULL;
+
+	if (sethostname(buf, buflen) == -1)
+		return OSERROR();
+
+	Py_RETURN_NONE;
 }

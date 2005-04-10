@@ -1,65 +1,61 @@
-/*
- * jail.c
+/*-
+ * Copyright (c) 2002-2005 Hye-Shik Chang
+ * All rights reserved.
  *
- * jail binding
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
  *
- * Author  : Hye-Shik Chang <perky@fallin.lv>
- * Date    : $Date: 2002/06/14 09:27:44 $
- * Created : 13 June 2002
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
  *
- * $Revision: 1.4 $
+ * $FreeBSD$
  */
-
-
-/*
- * Constants Listing
- */
-#if defined(PYFB_CONSTANTS)
-
-
-
-/*
- * Methods Listing
- */
-#elif defined(PYFB_METHODS)
-
-METHOD (jail)
-
-
-/*
- * Function Bindings
- */
-#else
 
 #include <sys/jail.h>
 
-static char Py_jail__doc__[] =
-"jail(path, hostname, ipaddr): imprison current process and future decendants";
+static char PyFB_jail__doc__[] =
+"jail(path, hostname, ip_number):\n"
+"The jail() system call sets up a jail and locks the current process\n"
+"in it.  The ``path'' should be set to the directory which is to be\n"
+"the root of the prison.  The ``hostname'' can be set to the hostname\n"
+"of the prison.  This can be changed from the inside of the prison.\n"
+"The ``ip_number'' can be set to the IP number assigned to the prison.";
 
 static PyObject *
-Py_jail(PyObject *self, PyObject *args)
+PyFB_jail(PyObject *self, PyObject *args)
 {
-    struct jail jp;
-    char *ipaddr;
+	struct jail jp;
+	char *ipaddr;
 
-    if (! PyArg_ParseTuple(args, "sss:jail", &(jp.path), &(jp.hostname), &ipaddr))
-        return NULL;
+	if (!PyArg_ParseTuple(args, "sss:jail", &(jp.path),
+			      &(jp.hostname), &ipaddr))
+		return NULL;
 
-    jp.version   = 0;
-    jp.ip_number = inet_addr(ipaddr);
+	jp.version   = 0;
+	jp.ip_number = inet_addr(ipaddr);
 
-    if (jp.ip_number == INADDR_NONE) {
-        PyErr_SetString(PyExc_ValueError, "malformed internet address");
-        return NULL;
-    }
+	if (jp.ip_number == INADDR_NONE) {
+		PyErr_SetString(PyExc_ValueError, "malformed internet address");
+		return NULL;
+	}
 
-    if (jail(&jp) == -1) {
-        PyErr_SetFromErrno(PyExc_OSError);
-        return NULL;
-    }
+	if (jail(&jp) == -1)
+		return OSERROR();
 
-    Py_INCREF(Py_None);
-    return Py_None;
+	Py_RETURN_NONE;
 }
-
-#endif

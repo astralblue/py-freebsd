@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2002-2005 Hye-Shik Chang
+ * Copyright (c) 2005 Soeren Straarup
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,38 +26,32 @@
  * $FreeBSD$
  */
 
-#include <sys/reboot.h>
+#if __FreeBSD_version >= 500101
 
-EXPCONST(int RB_AUTOBOOT)
-EXPCONST(int RB_ASKNAME)
-EXPCONST(int RB_DFLTROOT)
-EXPCONST(int RB_DUMP)
-EXPCONST(int RB_HALT)
-EXPCONST(int RB_POWEROFF)
-EXPCONST(int RB_INITNAME)
-EXPCONST(int RB_KDB)
-EXPCONST(int RB_NOSYNC)
-EXPCONST(int RB_RDONLY)
-EXPCONST(int RB_SINGLE)
+LIB_DEPENDS(geom)
+#include <libgeom.h>
 
-
-static char PyFB_reboot__doc__[] =
-"reboot([howto]):\n"
-"reboots the system.  Only the super-user may reboot a machine on\n"
-"demand.  However, a reboot is invoked automatically in the event\n"
-"of unrecoverable system failures.";
+static char PyFB_geom_getxml__doc__[] =
+"geom_getxml():\n"
+"returns a string with a xml layout of the geom layer\n";
 
 static PyObject *
-PyFB_reboot(PyObject *self, PyObject *args)
+PyFB_geom_getxml(PyObject *self)
 {
-	int howto = RB_AUTOBOOT;
+	PyObject *r;
+	char *xml;
 
-	if (!PyArg_ParseTuple(args, "|i:reboot", &howto))
-		return NULL;
-
-	if (reboot(howto) == -1)
+	xml = geom_getxml();
+	if (xml == NULL)
 		return OSERROR();
 
-	/* will never reach */
-	return NULL;
+	r = PyString_FromString(xml);
+	free(xml);
+	return r;
 }
+
+#endif
+
+/*
+ * The End, no more, it is over and out..
+ */

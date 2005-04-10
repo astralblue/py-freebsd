@@ -1,8 +1,8 @@
-Py-FreeBSD version 0.2
-======================
+Py-FreeBSD version 0.9.1
+========================
 
-Copyright(C) Hye-Shik Chang, 2002.
-$Id: README,v 1.5 2002/07/01 00:11:00 perky Exp $
+Copyright(C) Hye-Shik Chang, 2002-2005.
+$FreeBSD$
 
 
 
@@ -16,73 +16,28 @@ library functions.
 Requirement
 -----------
 
-This package requires FreeBSD 4 or higher with Python 2.0+.
+This package requires FreeBSD 4 or higher with Python 2.3+.
 
 
 Supported Functions
 -------------------
 
-() System Calls
+  * Newly supported functions and extension types from 0.9
 
-  fstatfs,
-  getfsstat, getlogin, getpriority, getrlimit, getrusage,
-  jail,
-  ktrace,
-  reboot,
-  sendfile,
-  setlogin, setpriority, setproctitle, setrlimit,
-  statfs,
+    chflags fchflags geom_getxml gethostname kevent kqueue lchflags
+    sethostname sysctl sysctldescr sysctlmibtoname sysctlnametomib
 
+  * Supported since 0.2
 
-() Roasted Functions
+    ifstats ipstats tcpstats udpstats
 
-  quotactl(2) ---
-    getquota,
-    quotaoff, quotaon, quotasync,
-    setquota,
+  * Supported since 0.1
 
-
-() Standard C Library
-
-  getfsent, getfsfile, getfsspec, getloadavg, getosreldate,
-  getprogname, getpwent, getpwnam, getpwuid,
-  setprogname,
-
-
-() Sysctl Wrappings
-
-  ipstats (net.inet.ip.stats)
-  tcpstats (net.inet.tcp.stats)
-  udpstats (net.inet.udp.stats)
-  ifstats (net.link.generic)
-
-
-
-Functions in Short Term Plan
-----------------------------
-
-() System Calls
-
-  syscall,
-  chflags,
-  sysctl,
-  kqueue, kevent,
-  kldload, kldstat, kldfind, kldfirstmod, kldload, kldnext, kldsym,
-  kldunload, modfind, modfnext, modnext, modstat,
-  aio_error, aio_read, aio_return, aio_suspend, aio_write, aio_cancel,
-  vfork, vfork_thread, rfork,
-  madvise,
-  mknod, mount, unmount
-
-
-() Kernel I/O
-
-  cd, floppy(fdc), keyboard, mouse, pci, usb, net
-
-
-() Standard C Library
-
-  gethostname, sethostname
+    fstatfs getfsent getfsfile getfsspec getfsstat getloadavg
+    getlogin getosreldate getpriority getprogname getpwent getpwnam
+    getpwuid getquota getrlimit getrusage jail ktrace quotaoff
+    quotaon quotasync reboot sendfile setlogin setpriority setproctitle
+    setprogname setquota setrlimit statfs
 
 
 Author
