@@ -52,6 +52,7 @@ setup(name = "py-freebsd",
             "freebsd",
             ["src/freebsdmodule.c"],
             libraries=libs,
+            library_dirs=['/lib', '/usr/lib'],
             depends=DEPENDS,
           )
       ],
