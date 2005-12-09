@@ -164,11 +164,11 @@ PyDict_SetItemString_StealRef(PyObject *d, char *name, PyObject *o)
 
 #define OSERROR() PyErr_SetFromErrno(PyExc_OSError)
 
-#include "sources.def"
+#include ".sources.def"
 
 /* Module Methods */
 static struct PyMethodDef freebsd_methods[] = {
-#include "methods.def"
+#include ".methods.def"
 	{0, 0},
 };
 
@@ -207,7 +207,7 @@ initfreebsd(void)
 	m = Py_InitModule4("freebsd", freebsd_methods, 0, 0,
 			   PYTHON_API_VERSION);
 
-	#include "types.def"
+	#include ".types.def"
 
 	/* Create a virtual submodule that provides constants */
 	constmod = create_newmodule("freebsd.const");
@@ -217,7 +217,7 @@ initfreebsd(void)
 
 	{
 		PyObject *d = PyModule_GetDict(constmod);
-		#include "const.def"
+		#include ".const.def"
 	}
 
 	PyModule_AddStringConstant(m, "__version__", __version__);

@@ -13,8 +13,8 @@ if not sys.platform.startswith('freebsd'):
 
 DEPENDS = glob.glob('src/*.c') + glob.glob('src/*.h')
 DEPENDS.remove('src/freebsdmodule.c')
-DEFFILES = ('src/const.def', 'src/methods.def', 'src/sources.def',
-            'src/types.def', 'src/libraries.def')
+DEFFILES = ('src/.const.def', 'src/.methods.def', 'src/.sources.def',
+            'src/.types.def', 'src/.libraries.def')
 sys.path.append('tools') # for source generators :)
 
 def isoutdated(fname):
@@ -36,11 +36,11 @@ update_deffiles()
 
 # get effective libraries in this system
 libs = os.popen('unifdef -D__FreeBSD_version=`sysctl -n kern.osreldate` ' +
-                'src/libraries.def', 'r').read().split()
+                'src/.libraries.def', 'r').read().split()
 libs = list(set(filter(None, libs)))
 
 setup(name = "py-freebsd",
-      version = "0.9.1",
+      version = "0.9.3",
       description = "Python Interface to FreeBSD Platform Library",
       author = "Hye-Shik Chang",
       author_email = "perky@FreeBSD.org",

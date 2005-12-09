@@ -6,3 +6,6 @@ Soeren Straarup <xride@x12.dk>
 
 Michal Suszko <Michal@dry.pl>
   ported py-freebsd to FreeBSD 5.
+
+Craig Rodrigues <rodrigc@crodrigues.org>
+  reported a 7-current incompatibility.

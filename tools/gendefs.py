@@ -70,11 +70,11 @@ def printout_lib(f, match):
         print "  Library: %s" % match
 
 def main():
-    constdef = open('src/const.def', 'w')
-    methoddef = open('src/methods.def', 'w')
-    sourcedef = open('src/sources.def', 'w')
-    typedef = open('src/types.def', 'w')
-    libdef = open('src/libraries.def', 'w')
+    constdef = open('src/.const.def', 'w')
+    methoddef = open('src/.methods.def', 'w')
+    sourcedef = open('src/.sources.def', 'w')
+    typedef = open('src/.types.def', 'w')
+    libdef = open('src/.libraries.def', 'w')
 
     for f in (constdef, methoddef, sourcedef, typedef):
         print >> f, "/* Generated on %s */" % time.asctime()
