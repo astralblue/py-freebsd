@@ -26,6 +26,7 @@
  * $FreeBSD$
  */
 
+#include <sys/param.h>
 #include <sys/sysctl.h>
 #include <net/if.h>
 #include <net/if_mib.h>
@@ -243,7 +244,9 @@ PyFB_ifstats(PyObject *self)
 		Py_DECREF(t);
 		p_int(type);        p_int(physical);
 		p_int(addrlen);     p_int(hdrlen);
+#if __FreeBSD_version < 700000
 		p_int(recvquota);   p_int(xmitquota);
+#endif
 		p_long(mtu);        p_long(metric);
 		p_long(baudrate);   p_long(ipackets);
 		p_long(ierrors);    p_long(opackets);
