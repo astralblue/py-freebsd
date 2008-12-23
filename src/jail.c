@@ -26,6 +26,7 @@
  * $FreeBSD$
  */
 
+#include <sys/param.h>
 #include <sys/jail.h>
 
 static char PyFB_jail__doc__[] =
@@ -39,6 +40,43 @@ static char PyFB_jail__doc__[] =
 static PyObject *
 PyFB_jail(PyObject *self, PyObject *args)
 {
+#if __FreeBSD_version >= 800056
+	struct jail jp;
+	struct in_addr ia;
+	char *ipaddr;
+	int error;
+
+	if (!PyArg_ParseTuple(args, "sss:jail", &(jp.path),
+			      &(jp.hostname), &ipaddr))
+		return NULL;
+
+	ia.s_addr	= inet_addr(ipaddr);
+	if (ia.s_addr == INADDR_NONE) {
+		PyErr_SetString(PyExc_ValueError, "malformed internet address");
+		return NULL;
+	}
+
+	jp.version	= JAIL_API_VERSION;
+	jp.jailname	= NULL;
+	jp.ip4s		= 1;
+	jp.ip4		= malloc(jp.ip4s * sizeof(struct in_addr));
+	if (jp.ip4 == NULL) {
+		PyErr_SetString(PyExc_ValueError, "Cannot allocate memory");
+		return NULL;
+	}
+	jp.ip4->s_addr = ia.s_addr;
+	jp.ip6s		= 0;
+	jp.ip6		= NULL;
+
+	error = jail(&jp);
+
+	free(jp.ip4);
+
+	if (error == -1)
+		return OSERROR();
+
+	Py_RETURN_NONE;
+#else
 	struct jail jp;
 	char *ipaddr;
 
@@ -58,4 +96,5 @@ PyFB_jail(PyObject *self, PyObject *args)
 		return OSERROR();
 
 	Py_RETURN_NONE;
+#endif
 }
