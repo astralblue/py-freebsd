@@ -40,7 +40,8 @@ static char PyFB_jail__doc__[] =
 static PyObject *
 PyFB_jail(PyObject *self, PyObject *args)
 {
-#if __FreeBSD_version >= 800056
+#if __FreeBSD_version >= 800056 || \
+    (__FreeBSD_version < 800000 && __FreeBSD_version >= 701103)
 	struct jail jp;
 	struct in_addr ia;
 	char *ipaddr;
