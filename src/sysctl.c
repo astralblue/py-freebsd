@@ -26,6 +26,7 @@
  * $FreeBSD$
  */
 
+#include <sys/param.h>
 #include <sys/sysctl.h>
 
 static char PyFB_getloadavg__doc__[] =
@@ -121,7 +122,11 @@ const size_t sysctl_type_sizes[CTLTYPE] = {
 	0,			/* CTLTYPE_NODE */
 	sizeof(int),		/* CTLTYPE_INT */
 	0,			/* CTLTYPE_STRING */
+#if __FreeBSD_version >= 900030
+	sizeof(quad_t),		/* CTLTYPE_S64 */
+#else
 	sizeof(quad_t),		/* CTLTYPE_QUAD */
+#endif
 	0,			/* CTLTYPE_OPAQUE */
 	sizeof(unsigned int),	/* CTLTYPE_UINT */
 	sizeof(long),		/* CTLTYPE_LONG */
@@ -329,7 +334,11 @@ PyFB_sysctl(PyObject *self, PyObject *args, PyObject *kwds)
 	case CTLTYPE_UINT:
 	case CTLTYPE_LONG:
 	case CTLTYPE_ULONG:
+#if __FreeBSD_version >= 900030
+	case CTLTYPE_S64:
+#else
 	case CTLTYPE_QUAD:
+#endif
 		if (!PyInt_Check(newobj) && !PyLong_Check(newobj)) {
 			PyErr_SetString(PyExc_TypeError,
 				"argument 2 must be integer for this node");
@@ -350,7 +359,11 @@ PyFB_sysctl(PyObject *self, PyObject *args, PyObject *kwds)
 		case CTLTYPE_ULONG:
 			val.m_ulong = PyLong_AsUnsignedLong(newobj);
 			break;
+#if __FreeBSD_version >= 900030
+		case CTLTYPE_S64:
+#else
 		case CTLTYPE_QUAD:
+#endif
 			val.m_quad = (quad_t)PyLong_AsLongLong(newobj);
 			break;
 		}
@@ -439,7 +452,11 @@ PyFB_sysctl(PyObject *self, PyObject *args, PyObject *kwds)
 	case CTLTYPE_STRING:
 		ret = PyString_FromStringAndSize(oldp, oldlen - 1);
 		break;
+#if __FreeBSD_version >= 900030
+	case CTLTYPE_S64:
+#else
 	case CTLTYPE_QUAD:
+#endif
 		assert(oldlen == sizeof(quad_t));
 		ret = PyLong_FromLongLong((long long)*(quad_t *)oldp);
 		break;
