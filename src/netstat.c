@@ -26,6 +26,7 @@
  * $FreeBSD$
  */
 
+#include <sys/param.h>
 #include <sys/sysctl.h>
 #include <net/if.h>
 #include <net/if_mib.h>
@@ -40,7 +41,9 @@ EXPCONST(int IFF_BROADCAST)
 EXPCONST(int IFF_DEBUG)
 EXPCONST(int IFF_LOOPBACK)
 EXPCONST(int IFF_POINTOPOINT)
+#if __FreeBSD_version < 1100002
 EXPCONST(int IFF_SMART)
+#endif
 EXPCONST(int IFF_RUNNING)
 EXPCONST(int IFF_NOARP)
 EXPCONST(int IFF_PROMISC)
