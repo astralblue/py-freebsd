@@ -99,3 +99,25 @@ PyFB_jail(PyObject *self, PyObject *args)
 	Py_RETURN_NONE;
 #endif
 }
+
+#if __FreeBSD_version >= 500111
+
+static char PyFB_jail_attach__doc__[] =
+"jail_attach(jid):\n"
+"Attach the current process to an existing jail, identified by jid.";
+
+static PyObject *
+PyFB_jail_attach(PyObject *self, PyObject *args)
+{
+	int jid;
+
+	if (!PyArg_ParseTuple(args, "i:jail_attach", &jid))
+		return NULL;
+
+	if (jail_attach(jid) != 0)
+		return OSERROR();
+
+	Py_RETURN_NONE;
+}
+
+#endif /* __FreeBSD_version >= 500111 */
