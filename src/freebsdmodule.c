@@ -65,6 +65,7 @@ struct FlagRepr {
 #endif
 
 /* 2.3 compatibility */
+#ifndef Py_VISIT
 #define Py_VISIT(op)                                    \
 	do {                                            \
 		if (op) {                               \
@@ -73,6 +74,7 @@ struct FlagRepr {
 				return vret;		\
 		}                                       \
 	} while (0)
+#endif /* ndef Py_VISIT */
 
 static PyObject *
 repr_flag(const struct FlagRepr *flags, unsigned int v)
