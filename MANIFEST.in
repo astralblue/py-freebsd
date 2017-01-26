@@ -1,0 +1,9 @@
+# $Id: MANIFEST.in,v 1.1 2002/06/13 23:05:33 perky Exp $
+
+include COPYRIGHT MANIFEST.in AUTHORS
+
+#recursive-include test *
+recursive-include doc *
+recursive-include src *.h *.c
+
+global-exclude */CVS/* *.pyc *.pyo

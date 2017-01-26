@@ -1,0 +1,94 @@
+Py-FreeBSD version 0.2
+======================
+
+Copyright(C) Hye-Shik Chang, 2002.
+$Id: README,v 1.5 2002/07/01 00:11:00 perky Exp $
+
+
+
+Introduction
+------------
+
+This package provides Python Interface to FreeBSD-Specific
+library functions.
+
+
+Requirement
+-----------
+
+This package requires FreeBSD 4 or higher with Python 2.0+.
+
+
+Supported Functions
+-------------------
+
+() System Calls
+
+  fstatfs,
+  getfsstat, getlogin, getpriority, getrlimit, getrusage,
+  jail,
+  ktrace,
+  reboot,
+  sendfile,
+  setlogin, setpriority, setproctitle, setrlimit,
+  statfs,
+
+
+() Roasted Functions
+
+  quotactl(2) ---
+    getquota,
+    quotaoff, quotaon, quotasync,
+    setquota,
+
+
+() Standard C Library
+
+  getfsent, getfsfile, getfsspec, getloadavg, getosreldate,
+  getprogname, getpwent, getpwnam, getpwuid,
+  setprogname,
+
+
+() Sysctl Wrappings
+
+  ipstats (net.inet.ip.stats)
+  tcpstats (net.inet.tcp.stats)
+  udpstats (net.inet.udp.stats)
+  ifstats (net.link.generic)
+
+
+
+Functions in Short Term Plan
+----------------------------
+
+() System Calls
+
+  syscall,
+  chflags,
+  sysctl,
+  kqueue, kevent,
+  kldload, kldstat, kldfind, kldfirstmod, kldload, kldnext, kldsym,
+  kldunload, modfind, modfnext, modnext, modstat,
+  aio_error, aio_read, aio_return, aio_suspend, aio_write, aio_cancel,
+  vfork, vfork_thread, rfork,
+  madvise,
+  mknod, mount, unmount
+
+
+() Kernel I/O
+
+  cd, floppy(fdc), keyboard, mouse, pci, usb, net
+
+
+() Standard C Library
+
+  gethostname, sethostname
+
+
+Author
+------
+
+Hye-Shik Chang <perky@FreeBSD.org>
+
+Any comments, suggestions, and/or patches are very welcome.
+Thank you for using Py-FreeBSD!
