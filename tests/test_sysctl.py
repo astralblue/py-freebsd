@@ -1,3 +1,4 @@
+from __future__ import absolute_import, division, print_function
 import unittest
 from test import test_support
 import sys, os
@@ -19,7 +20,7 @@ class Test_sysctl(unittest.TestCase):
         self.assertEqual(type(lavg), tuple)
         self.assertEqual(len(lavg), 3)
         for i in range(3):
-            self.failUnless(0 <= lavg[i] <= 1)
+            self.assertTrue(0 <= lavg[i] <= 1)
 
 def test_main():
     suite = unittest.TestSuite()
