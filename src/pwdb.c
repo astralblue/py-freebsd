@@ -1,122 +1,132 @@
-/*
- * pwdb.c
+/*-
+ * Copyright (c) 2002-2005 Hye-Shik Chang
+ * All rights reserved.
  *
- * passwd-related bindings
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
  *
- * Author  : Hye-Shik Chang <perky@fallin.lv>
- * Date    : $Date: 2002/06/14 10:35:22 $
- * Created : 13 June 2002
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
  *
- * $Revision: 1.4 $
+ * $FreeBSD$
  */
-
-
-/*
- * Constants Listing
- */
-#if defined(PYFB_CONSTANTS)
-
-
-/*
- * Methods Listing
- */
-#elif defined(PYFB_METHODS)
-
-METHOD (getpwnam)
-METHOD (getpwuid)
-METHOD_NOARGS (getpwent)
-
-
-/*
- * Function Bindings
- */
-#else
 
 #include <pwd.h>
-
 
 static PyObject *
 PyObject_FromPasswd(struct passwd *pwd)
 {
-    PyObject *r;
+	PyObject *r;
 
-    r = PyDict_New();
-    SETDICT_STR(r, "name",      pwd->pw_name);
-    SETDICT_STR(r, "passwd",    pwd->pw_passwd);
-    SETDICT_INT(r, "uid",       pwd->pw_uid);
-    SETDICT_INT(r, "gid",       pwd->pw_gid);
-    SETDICT_INT(r, "change",    pwd->pw_change);
-    SETDICT_STR(r, "class",     pwd->pw_class);
-    SETDICT_STR(r, "gecos",     pwd->pw_gecos);
-    SETDICT_STR(r, "dir",       pwd->pw_dir);
-    SETDICT_STR(r, "shell",     pwd->pw_shell);
-    SETDICT_INT(r, "expire",    pwd->pw_expire);
-    SETDICT_INT(r, "fields",    pwd->pw_fields);
+	r = PyDict_New();
+	SETDICT_STR(r, "name", pwd->pw_name);
+	SETDICT_STR(r, "passwd", pwd->pw_passwd);
+	SETDICT_INT(r, "uid", pwd->pw_uid);
+	SETDICT_INT(r, "gid", pwd->pw_gid);
+	SETDICT_INT(r, "change", pwd->pw_change);
+	SETDICT_STR(r, "class", pwd->pw_class);
+	SETDICT_STR(r, "gecos", pwd->pw_gecos);
+	SETDICT_STR(r, "dir", pwd->pw_dir);
+	SETDICT_STR(r, "shell", pwd->pw_shell);
+	SETDICT_INT(r, "expire", pwd->pw_expire);
+	SETDICT_INT(r, "fields", pwd->pw_fields);
 
-    return r;
+	return r;
 }
 
 
-static char Py_getpwuid__doc__[] =
-"getpwuid(uid): get password entry from passwd database by uid";
+static char PyFB_getpwuid__doc__[] =
+"getpwuid(uid):\n"
+"search the password database for the given user `uid`, respectively,\n"
+"always returning the first one encountered.";
 
 static PyObject *
-Py_getpwuid(PyObject *self, PyObject *args)
+PyFB_getpwuid(PyObject *self, PyObject *args)
 {
-    struct passwd *pwd;
-    int uid;
+	struct passwd *pwd;
+	int uid;
 
-    if (! PyArg_ParseTuple(args, "i:getpwuid", &uid))
-        return NULL;
+	if (!PyArg_ParseTuple(args, "i:getpwuid", &uid))
+		return NULL;
 
-    if ((pwd = getpwuid((uid_t)uid)) == NULL) {
-        PyErr_Format(ErrorObject, "no such uid %d", uid);
-        return NULL;
-    }
-
-    return PyObject_FromPasswd(pwd);
+	errno = 0;
+	pwd = getpwuid((uid_t)uid);
+	if (pwd == NULL) {
+		if (errno == 0) {
+			PyObject *uidn = PyInt_FromLong(uid);
+			PyErr_SetObject(PyExc_KeyError, uidn);
+			Py_DECREF(uidn);
+			return NULL;
+		}
+		else
+			return OSERROR();
+	}
+	return PyObject_FromPasswd(pwd);
 }
 
-static char Py_getpwnam__doc__[] =
-"getpwnam(name): get password entry from passwd database by name";
+static char PyFB_getpwnam__doc__[] =
+"getpwnam(name):\n"
+"search the password database for the given login name, always\n"
+"returning the first one encountered.";
 
 static PyObject *
-Py_getpwnam(PyObject *self, PyObject *args)
+PyFB_getpwnam(PyObject *self, PyObject *args)
 {
-    struct passwd *pwd;
-    char *name;
+	struct passwd *pwd;
+	char *name;
 
-    if (! PyArg_ParseTuple(args, "s:getpwnam", &name))
-        return NULL;
+	if (!PyArg_ParseTuple(args, "s:getpwnam", &name))
+		return NULL;
 
-    if ((pwd = getpwnam(name)) == NULL) {
-        PyErr_Format(ErrorObject, "no such user %s", name);
-        return NULL;
-    }
+	errno = 0;
+	pwd = getpwnam(name);
+	if (pwd == NULL) {
+		if (errno == 0) {
+			PyErr_SetString(PyExc_KeyError, name);
+			return NULL;
+		}
+		else
+			return OSERROR();
+	}
 
-    return PyObject_FromPasswd(pwd);
+	return PyObject_FromPasswd(pwd);
 }
 
-static char Py_getpwent__doc__[] =
-"getpwent(): get whole password entry from passwd database";
+static char PyFB_getpwent__doc__[] =
+"getpwent():\n"
+"reads the whole password database and is intended for programs\n"
+"that wish to process the complete list of users.";
 
 static PyObject *
-Py_getpwent(PyObject *self)
+PyFB_getpwent(PyObject *self)
 {
-    PyObject *r, *m;
-    struct passwd *pwd;
+	PyObject *r, *m;
+	struct passwd *pwd;
 
-    setpwent();
-    r = PyList_New(0);
+	setpwent();
+	r = PyList_New(0);
 
-    while((pwd = getpwent())) {
-        m = PyObject_FromPasswd(pwd);
-        PyList_Append(r, m);
-        Py_DECREF(m);
-    }
-    endpwent();
+	while ((pwd = getpwent())) {
+		m = PyObject_FromPasswd(pwd);
+		PyList_Append(r, m);
+		Py_DECREF(m);
+	}
+	endpwent();
 
-    return r;
+	return r;
 }
-
-#endif

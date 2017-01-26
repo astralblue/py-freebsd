@@ -1,62 +1,54 @@
-/*
- * sendfile.c
+/*-
+ * Copyright (c) 2002-2005 Hye-Shik Chang
+ * All rights reserved.
  *
- * sendfile binding
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
  *
- * Author  : Hye-Shik Chang <perky@fallin.lv>
- * Date    : $Date: 2002/06/14 09:27:44 $
- * Created : 13 June 2002
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
  *
- * $Revision: 1.4 $
+ * $FreeBSD$
  */
-
-
-/*
- * Constants Listing
- */
-#if defined(PYFB_CONSTANTS)
-
-
-/*
- * Methods Listing
- */
-#elif defined(PYFB_METHODS)
-
-METHOD (sendfile)
-
-
-/*
- * Function Bindings
- */
-#else
 
 #include <sys/uio.h>
 
 /* TODO: headers and trailers are not supported yet. */
-static char Py_sendfile__doc__[] =
-"sendfile(fd, s, offset, nbytes[, headers, tailers]): send a file to a socket";
+static char PyFB_sendfile__doc__[] =
+"sendfile(fd, s, offset, nbytes[, headers, tailers]):\n"
+"sends a regular file specified by descriptor `fd` out a stream\n"
+"socket specified by descriptor `s`.";
 
 static PyObject *
-Py_sendfile(PyObject *self, PyObject *args)
+PyFB_sendfile(PyObject *self, PyObject *args)
 {
-    int fd, s, res;
-    off_t offset, sbytes;
-    size_t nbytes;
-    PyObject *headers = NULL, *tailers = NULL;
-    
-    if (! PyArg_ParseTuple(args, "iill|OO:sendfile", &fd, &s, &offset, &nbytes, &headers, &tailers))
-        return NULL;
-    
-    if ((res = sendfile(fd, s, offset, nbytes, NULL, &sbytes, 0)) == -1) {
-        if (errno == EAGAIN)
-            return PyInt_FromLong(sbytes);
-        else {
-            PyErr_SetFromErrno(PyExc_OSError);
-            return NULL;
-        }
-    }
+	int fd, s, res;
+	off_t offset, sbytes;
+	size_t nbytes;
+	PyObject *headers = NULL, *tailers = NULL;
 
-    return PyInt_FromLong(sbytes);
+	if (!PyArg_ParseTuple(args, "iill|OO:sendfile", &fd, &s, &offset,
+			      &nbytes, &headers, &tailers))
+		return NULL;
+
+	res = sendfile(fd, s, offset, nbytes, NULL, &sbytes, 0);
+	if (res == -1 && errno != EAGAIN)
+		return OSERROR();
+
+	return PyInt_FromLong(sbytes);
 }
-
-#endif

@@ -1,87 +1,79 @@
-/*
- * process.c
+/*-
+ * Copyright (c) 2002-2005 Hye-Shik Chang
+ * All rights reserved.
  *
- * various process bindings
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
  *
- * Author  : Hye-Shik Chang <perky@fallin.lv>
- * Date    : $Date: 2002/06/14 10:34:30 $
- * Created : 14 June 2002
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
  *
- * $Revision: 1.3 $
+ * $FreeBSD$
  */
 
-
-/*
- * Constants Listing
- */
-#if defined(PYFB_CONSTANTS)
-
-
-/*
- * Methods Listing
- */
-#elif defined(PYFB_METHODS)
-
-METHOD_NOARGS (getprogname)
-METHOD (setprogname)
-METHOD (setproctitle)
-
-
-/*
- * Function Bindings
- */
-#else
-
-static char Py_getprogname__doc__[] =
-"getprogname(): get the program name";
+static char PyFB_getprogname__doc__[] =
+"getprogname():\n"
+"The getprogname() function returns the name of the program.  If the\n"
+"name has not been set yet, it will return None.";
 
 static PyObject *
-Py_getprogname(PyObject *self)
+PyFB_getprogname(PyObject *self)
 {
-    const char *progname;
+	const char *progname;
 
-    progname = getprogname();
-    if (progname == NULL) {
-        Py_INCREF(Py_None);
-        return Py_None;
-    } else
-        return PyString_FromString(progname);
+	progname = getprogname();
+	if (progname != NULL)
+		return PyString_FromString(progname);
+	Py_RETURN_NONE;
 }
 
 
-static char Py_setprogname__doc__[] =
-"setprogname(): set the program name";
+static char PyFB_setprogname__doc__[] =
+"setprogname():\n"
+"The setprogname() function sets the name of the program to be the\n"
+"last component of the `progname` argument.";
 
 static PyObject *
-Py_setprogname(PyObject *self, PyObject *args)
+PyFB_setprogname(PyObject *self, PyObject *args)
 {
-    char *progname;
+	char *progname;
 
-    if (! PyArg_ParseTuple(args, "s:setprogname", &progname))
-        return NULL;
+	if (!PyArg_ParseTuple(args, "s:setprogname", &progname))
+		return NULL;
 
-    setprogname(progname);
-
-    Py_INCREF(Py_None);
-    return Py_None;
+	setprogname(progname);
+	Py_RETURN_NONE;
 }
 
 
-static char Py_setproctitle__doc__[] =
-"setproctitle(title): set the process title for ps(1)";
+static char PyFB_setproctitle__doc__[] =
+"setproctitle(title):\n"
+"The setproctitle() library routine sets the process title that\n"
+"appears on the ps(1) command.";
 
 static PyObject *
-Py_setproctitle(PyObject *self, PyObject *args)
+PyFB_setproctitle(PyObject *self, PyObject *args)
 {
-    char *newtitle;
+	char *newtitle;
 
-    if (! PyArg_ParseTuple(args, "s:setproctitle", &newtitle))
-        return NULL;
+	if (!PyArg_ParseTuple(args, "s:setproctitle", &newtitle))
+		return NULL;
 
-    setproctitle(newtitle);
-
-    Py_INCREF(Py_None);
-    return Py_None;
+	setproctitle(newtitle);
+	Py_RETURN_NONE;
 }
-
-#endif
