@@ -121,3 +121,27 @@ PyFB_jail_attach(PyObject *self, PyObject *args)
 }
 
 #endif /* __FreeBSD_version >= 500111 */
+
+#if __FreeBSD_version >= 800084
+
+static char PyFB_jail_remove__doc__[] =
+"jail_remove(jid):\n"
+"Remove the jail identified by jid.\n"
+"\n"
+"Kill all processes belonging to the jail, and remove any children of that jail.";
+
+static PyObject *
+PyFB_jail_remove(PyObject *self, PyObject *args)
+{
+	int jid;
+
+	if (!PyArg_ParseTuple(args, "i:jail_remove", &jid))
+		return NULL;
+
+	if (jail_remove(jid) != 0)
+		return OSERROR();
+
+	Py_RETURN_NONE;
+}
+
+#endif /* __FreeBSD_version >= 800084 */
