@@ -56,6 +56,72 @@ PyFB_getloadavg(PyObject *self)
 #undef NSAMPLES
 }
 
+static char PyFB_get_cpu_times__doc__[] =
+"get_cpu_times():\n"
+"returns a 5 values tuple that contains the time in seconds spent in\n"
+"different CPU states (user, nice, system, interrupt and idle).  On\n"
+"multi-processor systems, the sum across all CPUs is returned.";
+
+/*
+ * Return a Python tuple representing user, kernel and idle CPU times
+ */
+static PyObject*
+PyFB_get_cpu_times(PyObject* self, PyObject* args)
+{
+	long cpu_time[CPUSTATES];
+	size_t size;
+	int hz;
+
+	size = sizeof(hz);
+        if (sysctlbyname("kern.hz", &hz, &size, NULL, 0)) {
+		PyErr_SetFromErrno(0);
+		return NULL;
+	}
+
+	size = sizeof(cpu_time);
+	if (sysctlbyname("kern.cp_time", &cpu_time, &size, NULL, 0) == -1) {
+		PyErr_SetFromErrno(0);
+		return NULL;
+	}
+
+	return Py_BuildValue("(ddddd)",
+	    (double)cpu_time[CP_USER] / hz,
+	    (double)cpu_time[CP_NICE] / hz,
+	    (double)cpu_time[CP_SYS] / hz,
+	    (double)cpu_time[CP_INTR] / hz,
+	    (double)cpu_time[CP_IDLE] / hz
+	    );
+}
+
+static char PyFB_get_kern_cp_time__doc__[] =
+"get_kern_cp_time():\n"
+"returns a 5 values tuple that contains the number of ticks spent in\n"
+"different CPU states (user, nice, system, interrupt and idle).  On\n"
+"multi-processor systems, the sum across all CPUs is returned.";
+
+/*
+ * Return a Python tuple representing user, kernel and idle CPU times
+ */
+static PyObject*
+PyFB_get_kern_cp_time(PyObject* self, PyObject* args)
+{
+	long cpu_time[CPUSTATES];
+	size_t size;
+
+	size = sizeof(cpu_time);
+	if (sysctlbyname("kern.cp_time", &cpu_time, &size, NULL, 0) == -1) {
+		PyErr_SetFromErrno(0);
+		return NULL;
+	}
+
+        return Py_BuildValue("(lllll)",
+            cpu_time[CP_USER],
+            cpu_time[CP_NICE],
+            cpu_time[CP_SYS] ,
+            cpu_time[CP_INTR],
+            cpu_time[CP_IDLE]
+            );
+}
 
 extern int getosreldate(void);
 
