@@ -22,6 +22,16 @@ This package requires FreeBSD 4 or higher with Python 2.3+.
 Supported Functions
 -------------------
 
+  * Newly supported functions and extension types from 0.9.3
+
+    Two new function to access content of the kern.cp_time sysctl:
+
+    o get_cpu_times(): get breakdown of time spent in different states
+      in seconds;
+
+    o get_kern_cp_time(): get breakdown of time spent in different
+      states in ticks.
+
   * Newly supported functions and extension types from 0.9
 
     chflags fchflags geom_getxml gethostname kevent kqueue lchflags
