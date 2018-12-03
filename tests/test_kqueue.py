@@ -32,9 +32,10 @@ class Test_kqueue(unittest.TestCase):
             del ev
             self.__shuffle_freeheaps()
 
-            os.write(wr, 'unittest')
+            data = 'unittest'.encode()
+            os.write(wr, data)
             r = kq.event(None, 1)
-            self.assertEqual(os.read(rd, 10), 'unittest')
+            self.assertEqual(os.read(rd, 10), data)
             self.assertEqual(r[0].udata, [1, 2, 3, 4])
             del r
 
@@ -49,11 +50,5 @@ class Test_kqueue(unittest.TestCase):
         # drive some memory allocations to shuffle free heaps.
         [[x]*50 for x in range(1000)]
 
-
-def test_main():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(Test_kqueue))
-    test_support.run_suite(suite)
-
 if __name__ == "__main__":
-    test_main()
+    unittest.main()

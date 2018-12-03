@@ -31,6 +31,8 @@
 LIB_DEPENDS(geom)
 #include <libgeom.h>
 
+#include "py2to3.h"
+
 static char PyFB_geom_getxml__doc__[] =
 "geom_getxml():\n"
 "returns a string with a xml layout of the geom layer\n";

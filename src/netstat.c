@@ -36,6 +36,8 @@
 #include <netinet/udp.h>
 #include <netinet/udp_var.h>
 
+#include "py2to3.h"
+
 EXPCONST(int IFF_UP)
 EXPCONST(int IFF_BROADCAST)
 EXPCONST(int IFF_DEBUG)

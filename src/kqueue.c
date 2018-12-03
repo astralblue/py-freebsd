@@ -29,6 +29,8 @@
 
 #include <sys/event.h>
 
+#include "py2to3.h"
+
 #define MAX_KEVENTS 512
 
 /* Event filters */
@@ -93,7 +95,7 @@ typedef struct {
 
 static PyTypeObject KEventType;
 
-#define KEvent_Check(v)  ((v)->ob_type == &KEventType)
+#define KEvent_Check(v)  (Py_TYPE(v) == &KEventType)
 
 /* kevent methods */
 
@@ -133,7 +135,7 @@ static void
 kevent_dealloc(keventobject *self)
 {
 	Py_XDECREF((PyObject *)self->e.udata);
-	self->ob_type->tp_free((PyObject *)self);
+	Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
 static int
@@ -269,7 +271,7 @@ typedef struct {
 
 static PyTypeObject KQueueType;
 
-#define KQueue_Check(v)	((v)->ob_type == &KQueueType)
+#define KQueue_Check(v)	(Py_TYPE(v) == &KQueueType)
 
 /* kqueue methods */
 
@@ -308,7 +310,7 @@ kqueue_dealloc(kqueueobject *self)
 		self->fd = -1;
 	}
 	Py_XDECREF(self->udrefkeep);
-	self->ob_type->tp_free((PyObject *)self);
+	Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
 static int
@@ -333,7 +335,7 @@ static char kqueue_event_doc[] =
 "may be used for the changelist and return value.";
 
 /* Call kevent(2) and do appropriate digestion of lists. */
-#define UDATAREFKEY(ev)	(PyString_FromStringAndSize((char *)&(ev), \
+#define UDATAREFKEY(ev)	(PyBytes_FromStringAndSize((char *)&(ev), \
 			 sizeof(uintptr_t)+sizeof(short)))
 
 static PyObject *
