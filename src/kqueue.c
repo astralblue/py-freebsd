@@ -93,7 +93,7 @@ typedef struct {
 
 static PyTypeObject KEventType;
 
-#define KEvent_Check(v)  ((v)->ob_type == &KEventType)
+#define KEvent_Check(v)  (Py_TYPE(v) == &KEventType)
 
 /* kevent methods */
 
@@ -133,7 +133,7 @@ static void
 kevent_dealloc(keventobject *self)
 {
 	Py_XDECREF((PyObject *)self->e.udata);
-	self->ob_type->tp_free((PyObject *)self);
+	Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
 static int
@@ -269,7 +269,7 @@ typedef struct {
 
 static PyTypeObject KQueueType;
 
-#define KQueue_Check(v)	((v)->ob_type == &KQueueType)
+#define KQueue_Check(v)	(Py_TYPE(v) == &KQueueType)
 
 /* kqueue methods */
 
@@ -308,7 +308,7 @@ kqueue_dealloc(kqueueobject *self)
 		self->fd = -1;
 	}
 	Py_XDECREF(self->udrefkeep);
-	self->ob_type->tp_free((PyObject *)self);
+	Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
 static int
