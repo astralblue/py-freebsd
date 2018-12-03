@@ -22,10 +22,5 @@ class Test_sysctl(unittest.TestCase):
         for i in range(3):
             self.assertTrue(0 <= lavg[i] <= 1)
 
-def test_main():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(Test_sysctl))
-    test_support.run_suite(suite)
-
 if __name__ == "__main__":
-    test_main()
+    unittest.main()
