@@ -170,6 +170,8 @@ parse_oid_sequence(PyObject *name, int *oid, size_t *size)
 static int
 parse_oid_argument(PyObject *name, int *oid, size_t *size)
 {
+	const char *cp;
+
 	if (PyString_Check(name)) {
 		int r;
 		if (PyString_GET_SIZE(name) == 0) {
@@ -177,7 +179,10 @@ parse_oid_argument(PyObject *name, int *oid, size_t *size)
 			return 0;
 		}
 		*size = CTL_MAXNAME;
-		r = sysctlnametomib(PyString_AS_STRING(name), oid, size);
+		cp = PyString_AS_STRING(name);
+		if (cp == NULL)
+			return -1;
+		r = sysctlnametomib(cp, oid, size);
 		if (r == -1) {
 			OSERROR();
 			return -1;
@@ -289,7 +294,8 @@ PyFB_sysctl(PyObject *self, PyObject *args, PyObject *kwds)
 	PyObject *oid, *ret, *newobj = NULL;
 	int oldlenhint = -1;
 	unsigned int kind;
-	void *oldp, *newp;
+	void *oldp;
+	const void *newp;
 	size_t oldlen, newlen, qoidsize;
 	union multitype val;
 	int qoid[CTL_MAXNAME];

@@ -335,7 +335,7 @@ static char kqueue_event_doc[] =
 "may be used for the changelist and return value.";
 
 /* Call kevent(2) and do appropriate digestion of lists. */
-#define UDATAREFKEY(ev)	(PyString_FromStringAndSize((char *)&(ev), \
+#define UDATAREFKEY(ev)	(PyBytes_FromStringAndSize((char *)&(ev), \
 			 sizeof(uintptr_t)+sizeof(short)))
 
 static PyObject *
