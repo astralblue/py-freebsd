@@ -29,6 +29,8 @@
 
 #include <sys/event.h>
 
+#include "py2to3.h"
+
 #define MAX_KEVENTS 512
 
 /* Event filters */

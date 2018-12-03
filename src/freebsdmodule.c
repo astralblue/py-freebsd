@@ -39,6 +39,8 @@
 #include "structmember.h"
 #include "version.h"
 
+#include "py2to3.h"
+
 union multitype {
 	int m_int;
 	unsigned int m_uint;
@@ -64,6 +66,7 @@ struct FlagRepr {
 #define Py_RETURN_NONE do { Py_INCREF(Py_None); return Py_None; } while (0);
 #endif
 
+#ifndef Py_VISIT
 /* 2.3 compatibility */
 #define Py_VISIT(op)                                    \
 	do {                                            \
@@ -73,6 +76,7 @@ struct FlagRepr {
 				return vret;		\
 		}                                       \
 	} while (0)
+#endif
 
 static PyObject *
 repr_flag(const struct FlagRepr *flags, unsigned int v)
@@ -196,23 +200,50 @@ create_newmodule(char *name)
 
 #define INITTYPE(type, obj)						\
 	if (PyType_Ready(&(type)) < 0)					\
-		return;							\
+		INITERROR;						\
 	PyModule_AddObject(m, (type).tp_name, (PyObject *)&(type));
+
+#if PY_MAJOR_VERSION >= 3
+    static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "freebsd",           /* m_name */
+        "FreeBSD module",    /* m_doc */
+        -1,                  /* m_size */
+        freebsd_methods,     /* m_methods */
+        NULL,                /* m_reload */
+        NULL,                /* m_traverse */
+        NULL,                /* m_clear */
+        NULL,                /* m_free */
+    };
+#endif
+
+#if PY_MAJOR_VERSION >= 3
+#define INITERROR return (NULL)
+
+PyMODINIT_FUNC
+PyInit_freebsd(void)
+#else
+#define INITERROR return
 
 void
 initfreebsd(void)
+#endif
 {
 	PyObject *m, *constmod;
 
+#if PY_MAJOR_VERSION >= 3
+        m = PyModule_Create(&moduledef);
+#else
 	m = Py_InitModule4("freebsd", freebsd_methods, 0, 0,
 			   PYTHON_API_VERSION);
+#endif
 
 	#include ".types.def"
 
 	/* Create a virtual submodule that provides constants */
 	constmod = create_newmodule("freebsd.const");
 	if (constmod == NULL)
-		return;
+		INITERROR;
 	PyModule_AddObject(m, "const", constmod);
 
 	{
@@ -224,4 +255,7 @@ initfreebsd(void)
 
 	if (PyErr_Occurred())
 		Py_FatalError("can't initialize the freebsd module");
+#if PY_MAJOR_VERSION >= 3
+        return (m);
+#endif
 }

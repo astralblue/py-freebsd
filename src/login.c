@@ -26,6 +26,8 @@
  * $FreeBSD$
  */
 
+#include "py2to3.h"
+
 static char PyFB_getlogin__doc__[] =
 "getlogin():\n"
 "returns the login name of the user associated with the current\n"

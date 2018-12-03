@@ -26,6 +26,8 @@
  * $FreeBSD$
  */
 
+#include "py2to3.h"
+
 static char PyFB_gethostname__doc__[] =
 "gethostname():\n"
 "returns the standard host name for the current processor, as\n"

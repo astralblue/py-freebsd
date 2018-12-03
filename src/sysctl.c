@@ -29,6 +29,8 @@
 #include <sys/param.h>
 #include <sys/sysctl.h>
 
+#include "py2to3.h"
+
 static char PyFB_getloadavg__doc__[] =
 "getloadavg():\n"
 "returns the number of processes in the system run queue averaged\n"

@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2005 Soeren Straarup
+ * Copyright (c) 2018 Sippy Software, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,34 +26,20 @@
  * $FreeBSD$
  */
 
-#if __FreeBSD_version >= 500101
-
-LIB_DEPENDS(geom)
-#include <libgeom.h>
-
-#include "py2to3.h"
-
-static char PyFB_geom_getxml__doc__[] =
-"geom_getxml():\n"
-"returns a string with a xml layout of the geom layer\n";
-
-static PyObject *
-PyFB_geom_getxml(PyObject *self)
-{
-	PyObject *r;
-	char *xml;
-
-	xml = geom_getxml();
-	if (xml == NULL)
-		return OSERROR();
-
-	r = PyString_FromString(xml);
-	free(xml);
-	return r;
-}
-
+#if !defined(PY_MAJOR_VERSION)
+    #error PY_MAJOR_VERSION is not defined
 #endif
 
-/*
- * The End, no more, it is over and out..
- */
+#if PY_MAJOR_VERSION >= 3
+    #define PyInt_Check(OB) PyLong_Check(OB)
+    #define PyInt_FromLong(V) PyLong_FromLong(V)
+    #define PyInt_AsLong(OB) PyLong_AsLong(OB)
+    #define PyString_FromStringAndSize(V, L) PyUnicode_FromStringAndSize(V, L)
+    #define PyString_FromString(V) PyUnicode_FromString(V)
+    #define PyString_FromFormat(F, A...) PyUnicode_FromFormat(F, ## A)
+    #define PyString_Size(OB) PyUnicode_GET_DATA_SIZE(OB)
+    #define PyString_AS_STRING(OB) PyUnicode_AS_DATA(OB)
+    #define _PyString_Join(OB1, OB2) PyUnicode_Join(OB1, OB2)
+    #define PyString_Check(OB) PyUnicode_Check(OB)
+    #define PyString_GET_SIZE(OB) PyUnicode_GET_DATA_SIZE(OB)
+#endif
