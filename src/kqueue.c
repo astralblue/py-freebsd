@@ -246,16 +246,16 @@ static char kevent_doc[] =
 
 static PyTypeObject KEventType = {
 	PyObject_HEAD_INIT(NULL)
-	tp_name:	"kevent",
-	tp_basicsize:	sizeof(keventobject),
-	tp_dealloc:	(destructor)kevent_dealloc,
-	tp_getattro:	PyObject_GenericGetAttr,
-	tp_repr:	(reprfunc)kevent_repr,
-	tp_flags:	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC,
-	tp_traverse:	(traverseproc)kevent_traverse,
-	tp_members:	kevent_memberlist,
-	tp_new:		kevent_new,
-	tp_doc:		kevent_doc,
+	.tp_name =	"kevent",
+	.tp_basicsize =	sizeof(keventobject),
+	.tp_dealloc =	(destructor)kevent_dealloc,
+	.tp_getattro =	PyObject_GenericGetAttr,
+	.tp_repr =	(reprfunc)kevent_repr,
+	.tp_flags =	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC,
+	.tp_traverse =	(traverseproc)kevent_traverse,
+	.tp_members =	kevent_memberlist,
+	.tp_new =	kevent_new,
+	.tp_doc =	kevent_doc,
 };
 
 
@@ -554,13 +554,13 @@ static char kqueue_doc[] =
 
 static PyTypeObject KQueueType = {
 	PyObject_HEAD_INIT(NULL)
-	tp_name:	"kqueue",
-	tp_basicsize:	sizeof(kqueueobject),
-	tp_dealloc:	(destructor)kqueue_dealloc,
-	tp_getattro:	PyObject_GenericGetAttr,
-	tp_flags:	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC,
-	tp_traverse:	(traverseproc)kqueue_traverse,
-	tp_methods:	kqueue_methods,
-	tp_new:		kqueue_new,
-	tp_doc:		kqueue_doc,
+	.tp_name =	"kqueue",
+	.tp_basicsize =	sizeof(kqueueobject),
+	.tp_dealloc =	(destructor)kqueue_dealloc,
+	.tp_getattro =	PyObject_GenericGetAttr,
+	.tp_flags =	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC,
+	.tp_traverse =	(traverseproc)kqueue_traverse,
+	.tp_methods =	kqueue_methods,
+	.tp_new =	kqueue_new,
+	.tp_doc =	kqueue_doc,
 };
