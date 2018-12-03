@@ -71,8 +71,6 @@ PyString_Size(PyObject *us)
     Py_DECREF(as);
     return (rval);
 }
-#else
-    #define PyBytes_FromStringAndSize(V, L) PyString_FromStringAndSize(V, L)
-#endif
+#endif /* PY_MAJOR_VERSION >= 3 */
 
 #endif /* __PY2TO3_H */
