@@ -41,7 +41,7 @@ libs = os.popen('unifdef -D__FreeBSD_version=`sysctl -n kern.osreldate` ' +
 libs = list(set([_f for _f in libs if _f]))
 
 setup(name = "py-freebsd",
-      version = "0.9.3",
+      version = "0.9.4",
       description = "Python Interface to FreeBSD Platform Library",
       author = "Hye-Shik Chang",
       author_email = "perky@FreeBSD.org",
