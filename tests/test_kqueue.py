@@ -1,5 +1,4 @@
 import unittest
-from test import test_support
 import sys, os
 from freebsd import *
 from freebsd.const import *
