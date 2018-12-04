@@ -24,13 +24,19 @@ Supported Functions
 
   * Newly supported functions and extension types from 0.9.3
 
-    Two new function to access content of the kern.cp_time sysctl:
+    Access content of the kern.cp_time sysctl:
 
     o get_cpu_times(): get breakdown of time spent in different states
       in seconds;
-
     o get_kern_cp_time(): get breakdown of time spent in different
       states in ticks.
+
+    Jail(8) management:
+
+    o jail_attach(): attach the current process to an existing jail, identified
+      by jid;
+    o jail_remove(): Kill all processes belonging to the jail, and remove any
+      children of that jail.
 
   * Newly supported functions and extension types from 0.9
 
