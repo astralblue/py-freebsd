@@ -56,6 +56,12 @@ PyFB_getloadavg(PyObject *self)
 #undef NSAMPLES
 }
 
+EXPCONST(int CP_USER)
+EXPCONST(int CP_NICE)
+EXPCONST(int CP_SYS)
+EXPCONST(int CP_INTR)
+EXPCONST(int CP_IDLE)
+
 static char PyFB_get_cpu_times__doc__[] =
 "get_cpu_times():\n"
 "returns a 5 values tuple that contains the time in seconds spent in\n"
