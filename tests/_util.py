@@ -1,4 +1,7 @@
 from os import popen
 
 def getprocoutput(cmd):
-    return popen(cmd, 'r').read()
+    p = popen(cmd, 'r')
+    res = p.read()
+    p.close()
+    return res
