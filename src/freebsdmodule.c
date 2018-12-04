@@ -232,7 +232,7 @@ initfreebsd(void)
 	PyObject *m, *constmod;
 
 #if PY_MAJOR_VERSION >= 3
-        m = PyModule_Create(&moduledef);
+	m = PyModule_Create(&moduledef);
 #else
 	m = Py_InitModule4("freebsd", freebsd_methods, 0, 0,
 			   PYTHON_API_VERSION);
