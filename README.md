@@ -1,26 +1,11 @@
-Py-FreeBSD version 0.9.3
-========================
+# Py-FreeBSD version 0.9.4
 
-Copyright(C) Hye-Shik Chang, 2002-2005.
-$FreeBSD$
-
-
-
-Introduction
-------------
+## Introduction
 
 This package provides Python Interface to FreeBSD-Specific
-library functions.
+C library functions.
 
-
-Requirement
------------
-
-This package requires FreeBSD 4 or higher with Python 2.3+.
-
-
-Supported Functions
--------------------
+## Supported Functions
 
   * Newly supported functions and extension types from 0.9.3
 
@@ -56,10 +41,17 @@ Supported Functions
     setprogname setquota setrlimit statfs
 
 
-Author
-------
+## Authors
+
+Some part of this software is based on Doug White's py-kqueue.
 
 Hye-Shik Chang <perky@FreeBSD.org>
 
-Any comments, suggestions, and/or patches are very welcome.
+Maksym Sobolyev <sobomax@FreeBSD.org> has brought this package into the
+wonderful world of the Python 3.x.
+
+Any comments, suggestions, and/or patches are very welcome. Just file an Issue
+or Pull Request on GitHub or bug report in the FreeBSD Bug Tracking system and
+we'll get back to it.
+
 Thank you for using Py-FreeBSD!
