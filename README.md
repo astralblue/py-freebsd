@@ -40,18 +40,19 @@ C library functions.
     quotaon quotasync reboot sendfile setlogin setpriority setproctitle
     setprogname setquota setrlimit statfs
 
-
-## Authors
-
-Some part of this software is based on Doug White's py-kqueue.
-
-Hye-Shik Chang <perky@FreeBSD.org>
-
-Maksym Sobolyev <sobomax@FreeBSD.org> has brought this package into the
-wonderful world of the Python 3.x.
+## Feedback
 
 Any comments, suggestions, and/or patches are very welcome. Just file an Issue
 or Pull Request on GitHub or bug report in the FreeBSD Bug Tracking system and
 we'll get back to it.
 
-Thank you for using Py-FreeBSD!
+## Authors
+
+Some part of this software is based on Doug White's py-kqueue.
+
+Hye-Shik Chang <perky@FreeBSD.org> added bulk of it.
+
+Maksym Sobolyev <sobomax@FreeBSD.org> has brought this package into the
+wonderful world of the Python 3.x.
+
+## Thank you for using Py-FreeBSD!
