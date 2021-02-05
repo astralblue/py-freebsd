@@ -52,7 +52,10 @@ Some part of this software is based on Doug White's py-kqueue.
 
 Hye-Shik Chang <perky@FreeBSD.org> added bulk of it.
 
+Eugene M. Kim <ab@astralblue.net> substantially improved jail(9) support
+and started porting to Python 3.
+
 Maksym Sobolyev <sobomax@FreeBSD.org> has brought this package into the
-wonderful world of the Python 3.x.
+wonderful world of the Python 3.x and released version 0.9.4.
 
 ## Thank you for using Py-FreeBSD!
