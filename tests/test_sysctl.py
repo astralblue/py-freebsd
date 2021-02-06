@@ -45,10 +45,10 @@ class Test_sysctl(unittest.TestCase):
         return ctimes
 
     def check_monot(self, ct0, ct1):
-        for i in (CP_USER, CP_SYS, CP_IDLE):
+        for i in (CP_USER, CP_IDLE):
            self.assertTrue(ct0[i] < ct1[i])
-        self.assertTrue(ct0[CP_NICE] <= ct1[CP_NICE])
-        self.assertTrue(ct0[CP_INTR] <= ct1[CP_INTR])
+        for i in (CP_SYS, CP_NICE, CP_INTR):
+           self.assertTrue(ct0[i] <= ct1[i])
 
 if __name__ == "__main__":
     unittest.main()
