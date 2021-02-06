@@ -1,15 +1,38 @@
 task:
-  container:
-    matrix:
-      - image: freebsd-13-0-snap
-      - image: freebsd-12-2
-  timeout_in: 120m
-  install_script:
-    - pkg install -y ccache python3
-  build_cache:
-    folder: /usr/obj
-  script:
-    - python3 setup.py build
-    - python3 setup.py bdist
-    - sudo python3 setup.py install
-
+  matrix:
+    - name: FreeBSD 12.1
+      freebsd_instance:
+        image_family: freebsd-12-1
+      install_script:
+        - pkg update -f
+        - pkg install -y ccache python3
+      build_cache:
+        folder: /usr/obj
+      script:
+        - python3 setup.py build
+        - python3 setup.py bdist
+        - sudo python3 setup.py install
+    - name: FreeBSD 12.2
+      freebsd_instance:
+        image_family: freebsd-12-2
+      install_script:
+        - pkg update -f
+        - pkg install -y ccache python3
+      build_cache:
+        folder: /usr/obj
+      script:
+        - python3 setup.py build
+        - python3 setup.py bdist
+        - sudo python3 setup.py install
+    - name: FreeBSD 13.0 (snap)
+      freebsd_instance:
+        image_family: freebsd-13-0-snap
+      install_script:
+        - pkg update -f
+        - pkg install -y ccache python3
+      build_cache:
+        folder: /usr/obj
+      script:
+        - python3 setup.py build
+        - python3 setup.py bdist
+        - sudo python3 setup.py install
