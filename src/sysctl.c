@@ -153,7 +153,8 @@ static unsigned int
 sysctltype(int *oid, size_t len)
 {
 	int qoid[CTL_MAXNAME+2];
-	int i, r;
+	int r;
+	unsigned int i;
 	char buf[BUFSIZ];
 	size_t bufsize;
 
@@ -176,7 +177,8 @@ _sysctlmibtoname(int *oid, size_t size)
 	char name[BUFSIZ];
 	int qoid[CTL_MAXNAME+2];
 	size_t namelen;
-	int i, r;
+	int r;
+	unsigned int i;
 
 	qoid[0] = 0;
 	qoid[1] = 1;
@@ -210,7 +212,7 @@ const size_t sysctl_type_sizes[CTLTYPE] = {
 static int
 parse_oid_sequence(PyObject *name, int *oid, size_t *size)
 {
-	int i;
+	unsigned int i;
 	*size = PySequence_Size(name);
 	for (i = 0; i < *size && i < CTL_MAXNAME; i++) {
 		PyObject *el;
@@ -275,7 +277,8 @@ static PyObject *
 sysctl_listnode(int *oid, size_t oidsize, int byname)
 {
 	PyObject *children;
-	int i, r;
+	int r;
+	unsigned int i;
 	int name1[CTL_MAXNAME+2], name2[CTL_MAXNAME+2];
 	size_t len1, len2;
 
@@ -580,7 +583,8 @@ PyFB_sysctlnametomib(PyObject *self, PyObject *args)
 {
 	PyObject *ret;
 	char *name;
-	int qoid[CTL_MAXNAME], i;
+	int qoid[CTL_MAXNAME];
+	unsigned int i;
 	size_t qoidsize;
 
 	if (!PyArg_ParseTuple(args, "s:sysctlnametomib", &name))
