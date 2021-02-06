@@ -1,7 +1,8 @@
-freebsd_instance:
-  image_family: freebsd-13-0-snap
-
 task:
+  container:
+    matrix:
+      - image: freebsd-13-0-snap
+      - image: freebsd-12-2
   timeout_in: 120m
   install_script:
     - pkg install -y ccache python3
