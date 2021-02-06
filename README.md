@@ -1,5 +1,7 @@
 # Py-FreeBSD version 0.9.4
 
+[![Build Status - Cirrus][]][Build status]
+
 ## Introduction
 
 This package provides Python Interface to FreeBSD-Specific
@@ -59,3 +61,6 @@ Maksym Sobolyev <sobomax@FreeBSD.org> has brought this package into the
 wonderful world of the Python 3.x and released version 0.9.4.
 
 ## Thank you for using Py-FreeBSD!
+
+[Build Status - Cirrus]: https://api.cirrus-ci.com/github/sobomax/py-freebsd.svg
+[Build status]: https://cirrus-ci.com/github/sobomax/py-freebsd/master
