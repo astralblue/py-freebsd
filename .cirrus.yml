@@ -28,7 +28,7 @@ task:
       freebsd_instance:
         image_family: freebsd-13-0-snap
       install_script:
-        - pkg update -f
+#        - pkg update -f
         - pkg install -y ccache python3
       build_cache:
         folder: /usr/obj
