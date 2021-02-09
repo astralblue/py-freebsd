@@ -39,7 +39,7 @@ class Test_sysctl(unittest.TestCase):
         for i in (CP_USER, CP_SYS, CP_INTR, CP_IDLE):
             self.assertTrue(ctimes[i] > zer0)
         self.assertTrue(ctimes[CP_NICE] >= zer0)
-        genload(0.25)
+        genload(0.5)
         ctimes1 = func()
         self.check_monot(ctimes, ctimes1)
         return ctimes
