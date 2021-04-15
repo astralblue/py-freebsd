@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from __future__ import absolute_import, division, print_function
 from distutils.core import setup, Extension
 import sys, glob, os, os.path, time
 try:
@@ -8,7 +9,7 @@ except:
     from sets import Set as set
 
 if not sys.platform.startswith('freebsd'):
-    print >> sys.stdout, "==> This package is for FreeBSD only."
+    print("==> This package is for FreeBSD only.", file=sys.stdout)
     raise SystemExit
 
 DEPENDS = glob.glob('src/*.c') + glob.glob('src/*.h')
@@ -21,13 +22,13 @@ def isoutdated(fname):
     if not os.access(fname, os.R_OK):
         return True
 
-    srcmtime = max(map(os.path.getmtime, DEPENDS))
+    srcmtime = max(list(map(os.path.getmtime, DEPENDS)))
     genmtime = os.path.getmtime(fname)
     return (genmtime < srcmtime)
 
 def update_deffiles():
-    if filter(None, map(isoutdated, DEFFILES)):
-        print "==> Generating definition files.."
+    if [_f for _f in map(isoutdated, DEFFILES) if _f]:
+        print("==> Generating definition files..")
         import gendefs
         gendefs.main()
 
@@ -37,10 +38,10 @@ update_deffiles()
 # get effective libraries in this system
 libs = os.popen('unifdef -D__FreeBSD_version=`sysctl -n kern.osreldate` ' +
                 'src/.libraries.def', 'r').read().split()
-libs = list(set(filter(None, libs)))
+libs = list(set([_f for _f in libs if _f]))
 
 setup(name = "py-freebsd",
-      version = "0.9.3",
+      version = "0.9.4",
       description = "Python Interface to FreeBSD Platform Library",
       author = "Hye-Shik Chang",
       author_email = "perky@FreeBSD.org",

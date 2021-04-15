@@ -1,11 +1,16 @@
+from __future__ import absolute_import, division, print_function
 import unittest
-from test import test_support
-import sys, os
+from time import sleep, time
 from freebsd import *
 from freebsd.const import *
 
-def getprocoutput(cmd):
-    return os.popen(cmd, 'r').read()
+from _util import getprocoutput
+
+def genload(period):
+    sleep(period / 2)
+    btime = time()
+    while time() < btime + (period / 2):
+        continue
 
 class Test_sysctl(unittest.TestCase):
 
@@ -19,12 +24,31 @@ class Test_sysctl(unittest.TestCase):
         self.assertEqual(type(lavg), tuple)
         self.assertEqual(len(lavg), 3)
         for i in range(3):
-            self.failUnless(0 <= lavg[i] <= 1)
+            self.assertTrue(0 <= lavg[i] <= 1)
 
-def test_main():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(Test_sysctl))
-    test_support.run_suite(suite)
+    def test_get_cpu_times(self):
+        self.do_cp_time_test(get_cpu_times, 0.0)
+
+    def test_get_kern_cp_time(self):
+        ctimes = self.do_cp_time_test(get_kern_cp_time, 0)
+        ctimes1 = [int(x) for x in getprocoutput('sysctl -qn kern.cp_time').split()]
+        self.check_monot(ctimes, ctimes1)
+
+    def do_cp_time_test(self, func, zer0):
+        ctimes = func()
+        for i in (CP_USER, CP_SYS, CP_INTR, CP_IDLE):
+            self.assertTrue(ctimes[i] > zer0)
+        self.assertTrue(ctimes[CP_NICE] >= zer0)
+        genload(0.5)
+        ctimes1 = func()
+        self.check_monot(ctimes, ctimes1)
+        return ctimes
+
+    def check_monot(self, ct0, ct1):
+        for i in (CP_USER, CP_IDLE):
+           self.assertTrue(ct0[i] < ct1[i])
+        for i in (CP_SYS, CP_NICE, CP_INTR):
+           self.assertTrue(ct0[i] <= ct1[i])
 
 if __name__ == "__main__":
-    test_main()
+    unittest.main()

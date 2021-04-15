@@ -29,6 +29,8 @@
 #include <sys/param.h>
 #include <sys/sysctl.h>
 
+#include "py2to3.h"
+
 static char PyFB_getloadavg__doc__[] =
 "getloadavg():\n"
 "returns the number of processes in the system run queue averaged\n"
@@ -54,6 +56,78 @@ PyFB_getloadavg(PyObject *self)
 #undef NSAMPLES
 }
 
+EXPCONST(int CP_USER)
+EXPCONST(int CP_NICE)
+EXPCONST(int CP_SYS)
+EXPCONST(int CP_INTR)
+EXPCONST(int CP_IDLE)
+
+static char PyFB_get_cpu_times__doc__[] =
+"get_cpu_times():\n"
+"returns a 5 values tuple that contains the time in seconds spent in\n"
+"different CPU states (user, nice, system, interrupt and idle).  On\n"
+"multi-processor systems, the sum across all CPUs is returned.";
+
+/*
+ * Return a Python tuple representing user, kernel and idle CPU times
+ */
+static PyObject*
+PyFB_get_cpu_times(PyObject* self, PyObject* args)
+{
+	long cpu_time[CPUSTATES];
+	size_t size;
+	int hz;
+
+	size = sizeof(hz);
+        if (sysctlbyname("kern.hz", &hz, &size, NULL, 0)) {
+		PyErr_SetFromErrno(0);
+		return NULL;
+	}
+
+	size = sizeof(cpu_time);
+	if (sysctlbyname("kern.cp_time", &cpu_time, &size, NULL, 0) == -1) {
+		PyErr_SetFromErrno(0);
+		return NULL;
+	}
+
+	return Py_BuildValue("(ddddd)",
+	    (double)cpu_time[CP_USER] / hz,
+	    (double)cpu_time[CP_NICE] / hz,
+	    (double)cpu_time[CP_SYS] / hz,
+	    (double)cpu_time[CP_INTR] / hz,
+	    (double)cpu_time[CP_IDLE] / hz
+	    );
+}
+
+static char PyFB_get_kern_cp_time__doc__[] =
+"get_kern_cp_time():\n"
+"returns a 5 values tuple that contains the number of ticks spent in\n"
+"different CPU states (user, nice, system, interrupt and idle).  On\n"
+"multi-processor systems, the sum across all CPUs is returned.";
+
+/*
+ * Return a Python tuple representing user, kernel and idle CPU times
+ */
+static PyObject*
+PyFB_get_kern_cp_time(PyObject* self, PyObject* args)
+{
+	long cpu_time[CPUSTATES];
+	size_t size;
+
+	size = sizeof(cpu_time);
+	if (sysctlbyname("kern.cp_time", &cpu_time, &size, NULL, 0) == -1) {
+		PyErr_SetFromErrno(0);
+		return NULL;
+	}
+
+        return Py_BuildValue("(lllll)",
+            cpu_time[CP_USER],
+            cpu_time[CP_NICE],
+            cpu_time[CP_SYS] ,
+            cpu_time[CP_INTR],
+            cpu_time[CP_IDLE]
+            );
+}
 
 extern int getosreldate(void);
 
@@ -79,7 +153,8 @@ static unsigned int
 sysctltype(int *oid, size_t len)
 {
 	int qoid[CTL_MAXNAME+2];
-	int i, r;
+	int r;
+	unsigned int i;
 	char buf[BUFSIZ];
 	size_t bufsize;
 
@@ -102,7 +177,8 @@ _sysctlmibtoname(int *oid, size_t size)
 	char name[BUFSIZ];
 	int qoid[CTL_MAXNAME+2];
 	size_t namelen;
-	int i, r;
+	int r;
+	unsigned int i;
 
 	qoid[0] = 0;
 	qoid[1] = 1;
@@ -136,7 +212,7 @@ const size_t sysctl_type_sizes[CTLTYPE] = {
 static int
 parse_oid_sequence(PyObject *name, int *oid, size_t *size)
 {
-	int i;
+	unsigned int i;
 	*size = PySequence_Size(name);
 	for (i = 0; i < *size && i < CTL_MAXNAME; i++) {
 		PyObject *el;
@@ -168,6 +244,8 @@ parse_oid_sequence(PyObject *name, int *oid, size_t *size)
 static int
 parse_oid_argument(PyObject *name, int *oid, size_t *size)
 {
+	const char *cp;
+
 	if (PyString_Check(name)) {
 		int r;
 		if (PyString_GET_SIZE(name) == 0) {
@@ -175,7 +253,10 @@ parse_oid_argument(PyObject *name, int *oid, size_t *size)
 			return 0;
 		}
 		*size = CTL_MAXNAME;
-		r = sysctlnametomib(PyString_AS_STRING(name), oid, size);
+		cp = PyString_AS_STRING(name);
+		if (cp == NULL)
+			return -1;
+		r = sysctlnametomib(cp, oid, size);
 		if (r == -1) {
 			OSERROR();
 			return -1;
@@ -196,7 +277,8 @@ static PyObject *
 sysctl_listnode(int *oid, size_t oidsize, int byname)
 {
 	PyObject *children;
-	int i, r;
+	int r;
+	unsigned int i;
 	int name1[CTL_MAXNAME+2], name2[CTL_MAXNAME+2];
 	size_t len1, len2;
 
@@ -287,7 +369,8 @@ PyFB_sysctl(PyObject *self, PyObject *args, PyObject *kwds)
 	PyObject *oid, *ret, *newobj = NULL;
 	int oldlenhint = -1;
 	unsigned int kind;
-	void *oldp, *newp;
+	void *oldp;
+	const void *newp;
 	size_t oldlen, newlen, qoidsize;
 	union multitype val;
 	int qoid[CTL_MAXNAME];
@@ -500,7 +583,8 @@ PyFB_sysctlnametomib(PyObject *self, PyObject *args)
 {
 	PyObject *ret;
 	char *name;
-	int qoid[CTL_MAXNAME], i;
+	int qoid[CTL_MAXNAME];
+	unsigned int i;
 	size_t qoidsize;
 
 	if (!PyArg_ParseTuple(args, "s:sysctlnametomib", &name))

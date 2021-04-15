@@ -26,6 +26,8 @@
  * $FreeBSD$
  */
 
+#include "py2to3.h"
+
 static char PyFB_getprogname__doc__[] =
 "getprogname():\n"
 "The getprogname() function returns the name of the program.  If the\n"

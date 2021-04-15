@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import, division, print_function
 import os, glob
 import time, re
 
@@ -24,50 +25,50 @@ try:
 except NameError:
     def sorted(o):
         o = o[:]
-	o.sort()
-	return o
+        o.sort()
+        return o
 
 def printout_const(f, match):
     defcond, consttype, ignore, name = match
     consttype = consttype.strip()
 
     if not defcond:
-        print >> f, 'SETDICT_%s(d, "%s", %s);' % (
+        print('SETDICT_%s(d, "%s", %s);' % (
             consttype.upper().replace('UNSIGNED ', 'U'), name,
-            name)
+            name), file=f)
     elif defcond == '_IFAVAIL':
-        print >> f, '#ifdef %s' % name
-        print >> f, 'SETDICT_%s(d, "%s", %s);' % (
+        print('#ifdef %s' % name, file=f)
+        print('SETDICT_%s(d, "%s", %s);' % (
             consttype.upper().replace('UNSIGNED ', 'U'), name,
-            name)
-        print >> f, '#endif'
+            name), file=f)
+        print('#endif', file=f)
     else:
-        raise NotImplementedError, "%s is not supported condition yet" % (
-                defcond)
+        raise NotImplementedError("%s is not supported condition yet" % (
+                defcond))
 
     if __verbose__:
-        print "  Constant: %s %s" % (consttype, name)
+        print("  Constant: %s %s" % (consttype, name))
 
 def printout_func(f, match):
     name, args = match
     nargs = len(args.split(','))
 
-    print >> f, '{"%s", (PyCFunction)PyFB_%s, %s,' % (
-                    name, name, method_type[nargs])
-    print >> f, ' PyFB_%s__doc__},' % (name)
+    print('{"%s", (PyCFunction)PyFB_%s, %s,' % (
+                    name, name, method_type[nargs]), file=f)
+    print(' PyFB_%s__doc__},' % (name), file=f)
 
     if __verbose__:
-        print "  Function: %s %s" % (name, method_type[nargs])
+        print("  Function: %s %s" % (name, method_type[nargs]))
 
 def printout_type(f, match):
-    print >> f, 'INITTYPE(%s, %s)' % match
+    print('INITTYPE(%s, %s)' % match, file=f)
     if __verbose__:
-        print "  Type: %s %s" % match
+        print("  Type: %s %s" % match)
 
 def printout_lib(f, match):
-    print >> f, '%s' % match
+    print('%s' % match, file=f)
     if __verbose__:
-        print "  Library: %s" % match
+        print("  Library: %s" % match)
 
 def main():
     constdef = open('src/.const.def', 'w')
@@ -77,16 +78,16 @@ def main():
     libdef = open('src/.libraries.def', 'w')
 
     for f in (constdef, methoddef, sourcedef, typedef):
-        print >> f, "/* Generated on %s */" % time.asctime()
+        print("/* Generated on %s */" % time.asctime(), file=f)
 
     for src in sorted(glob.glob('src/*.c')):
         filename = os.path.basename(src)
         if filename == 'freebsdmodule.c':
             continue
 
-        print "scanning %s" % src
+        print("scanning %s" % src)
 
-        print >> sourcedef, '#include "%s"' % filename
+        print('#include "%s"' % filename, file=sourcedef)
 
         ifblocks = []
         for line in open(src):
@@ -115,13 +116,13 @@ def main():
                 react = printout_lib, libdef, found[0]
 
             if react is not None:
-                cond = ' && '.join(filter(None, ifblocks))
+                cond = ' && '.join([_f for _f in ifblocks if _f])
                 outf = react[1]
                 if cond:
-                    print >> outf, '#if', cond
+                    print('#if', cond, file=outf)
                 react[0](react[1], react[2])
                 if cond:
-                    print >> outf, '#endif'
+                    print('#endif', file=outf)
 
 
 if __name__ == '__main__':
